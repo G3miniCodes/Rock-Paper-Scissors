@@ -1,0 +1,40 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rock Paper Scissors</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/style.css') }}">
+</head>
+<body>
+    <div class="game-container">
+        <h1 class="game-title">Rock Paper Scissors</h1>
+        <h2 class="subtitle">Choose Your Avatar</h2>
+        <div class="avatar-selection">
+            <span class="avatar" onclick="selectAvatar('👩🏻‍🦰')">👩🏻‍🦰</span>
+            <span class="avatar" onclick="selectAvatar('👨🏻‍🦰')">👨🏻‍🦰</span>
+            <span class="avatar" onclick="selectAvatar('🧑🏽')">🧑🏽</span>
+            <span class="avatar" onclick="selectAvatar('👩🏻')">👩🏻</span>
+        </div>
+        <button id="play-button" onclick="startGame()" disabled>Play</button>
+    </div>
+
+    <script>
+        let selectedAvatar = null;
+
+        function selectAvatar(avatar) {
+            selectedAvatar = avatar;
+            document.querySelectorAll('.avatar').forEach(el => el.classList.remove('selected'));
+            event.target.classList.add('selected');
+            document.getElementById("play-button").disabled = false;
+        }
+
+        function startGame() {
+            if (selectedAvatar) {
+                window.location.href = `/game?avatar=${encodeURIComponent(selectedAvatar)}`;
+            }
+        }
+    </script>
+</body>
+</html>

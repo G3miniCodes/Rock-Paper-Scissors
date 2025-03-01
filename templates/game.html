@@ -1,0 +1,71 @@
+<!-- game.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/style.css') }}">
+</head>
+<body>
+    <div class="game-container">
+        <h1 class="game-title">Rock Paper Scissors</h1>
+        <h2 class="subtitle">Get Ready!</h2>
+        <div class="game-area">
+            <div class="computer-side">
+                <span class="robot">🤖</span>
+                <div id="computer-choice" class="choice-display"></div>
+            </div>
+            <div id="countdown" class="countdown">5</div>
+            <div class="user-side">
+                <span id="user-avatar">{{ avatar }}</span>
+                <div class="choices">
+                    <button onclick="makeChoice('👊🏻')">👊🏻</button>
+                    <button onclick="makeChoice('🖐🏻')">🖐🏻</button>
+                    <button onclick="makeChoice('✌🏻')">✌🏻</button>
+                </div>
+            </div>
+        </div>
+        <h2 id="result" class="result-display"></h2>
+        <button id="play-again" style="display: none;" onclick="window.location.reload()">Play Again</button>
+    </div>
+    <script>
+        let countdown = 5;
+        let userChoice = null;
+        
+        function startTimer() {
+            let timer = setInterval(() => {
+                countdown--;
+                document.getElementById("countdown").innerText = countdown;
+                if (countdown === 0) {
+                    clearInterval(timer);
+                    if (userChoice) {
+                        fetchResult(userChoice);
+                    }
+                }
+            }, 1000);
+        }
+        
+        function makeChoice(choice) {
+            userChoice = choice;
+            document.getElementById("result").innerText = "Waiting for result...";
+            document.getElementById("countdown").innerText = countdown;
+            startTimer();
+        }
+        
+        function fetchResult(choice) {
+            fetch('/play', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_choice: choice })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("computer-choice").innerText = data.computer_choice;
+                document.getElementById("result").innerText = data.result;
+                document.getElementById("play-again").style.display = "block";
+            });
+        }
+    </script>
+</body>
+</html>
